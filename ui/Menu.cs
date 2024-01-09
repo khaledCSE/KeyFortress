@@ -93,7 +93,7 @@ public class Menu
           usernameOrEmail = Console.ReadLine() ?? "";
 
           Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
+          password = Utils.MaskPasswordInput();
           break;
         }
       case "application":
@@ -105,7 +105,7 @@ public class Menu
           usernameOrEmail = Console.ReadLine() ?? "";
 
           Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
+          password = Utils.MaskPasswordInput();
           break;
         }
       case "game":
@@ -120,7 +120,7 @@ public class Menu
           usernameOrEmail = Console.ReadLine() ?? "";
 
           Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
+          password = Utils.MaskPasswordInput();
           break;
         }
       default:
@@ -205,7 +205,7 @@ public class Menu
         string nameOfApp = Console.ReadLine() ?? "";
 
         Console.Write("\nEnter New Password: ");
-        string newPassword = Console.ReadLine() ?? "";
+        string newPassword = Utils.MaskPasswordInput();
 
         if (typeOfApp.Equals("website"))
         {

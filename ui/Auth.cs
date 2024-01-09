@@ -21,7 +21,7 @@ public class Auth
     string username = Console.ReadLine() ?? "";
 
     Console.Write("Enter password: ");
-    string password = Console.ReadLine() ?? "";
+    string password = Utils.MaskPasswordInput();
 
     var user = dB.users.Where(u => u.Username == username).FirstOrDefault();
 
@@ -46,7 +46,7 @@ public class Auth
     string username = Console.ReadLine() ?? "";
 
     Console.Write("Enter password (Leave blank to generate a strong password): ");
-    string password = Console.ReadLine() ?? "";
+    string password = Utils.MaskPasswordInput();
 
     var user = dB.users.Where(u => u.Username == username).FirstOrDefault();
 

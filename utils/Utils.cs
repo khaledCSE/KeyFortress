@@ -111,5 +111,31 @@ public class Utils
     return textInfo.ToTitleCase(sentence.ToLower());
   }
 
+  /// <summary>
+  /// Reads a password from the console input and masks the characters with asterisks.
+  /// </summary>
+  /// <returns>The password entered by the user.</returns>
+  public static string MaskPasswordInput()
+  {
+    string password = "";
+    ConsoleKeyInfo keyInfo;
 
+    do
+    {
+      keyInfo = Console.ReadKey(intercept: true);
+
+      if (keyInfo.Key != ConsoleKey.Enter && keyInfo.Key != ConsoleKey.Backspace)
+      {
+        password += keyInfo.KeyChar;
+        Console.Write("*"); // Mask the character with an asterisk
+      }
+      else if (keyInfo.Key == ConsoleKey.Backspace && password.Length > 0)
+      {
+        password = password.Substring(0, password.Length - 1);
+        Console.Write("\b \b"); // Move the cursor back, overwrite with a space, and move the cursor back again
+      }
+    } while (keyInfo.Key != ConsoleKey.Enter);
+
+    return password;
+  }
 }
