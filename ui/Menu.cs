@@ -39,6 +39,9 @@ public class Menu
         case "🛡️ Update Password":
           UpdatePassword();
           break;
+        case "🗑️ Delete Password":
+          DeletePassword();
+          break;
         case "❌ Exit":
           Console.WriteLine("Time to leave the fortress like a 👑");
           Environment.Exit(0);
@@ -279,6 +282,37 @@ public class Menu
     }
   }
 
+  public void DeletePassword()
+  {
+    bool isValidIdProvided = false;
+
+    while (!isValidIdProvided)
+    {
+      Console.Write("\nEnter the Password ID: ");
+      int passwordID = int.Parse((Console.ReadLine() ?? "").ToLower());
+
+      // * Find the password
+      Password? passwordFound = dB.passwords
+                            .Where(p =>
+                                    p.PasswordID == passwordID &&
+                                    p.UserID == UI.loggedInUser!.UserID
+                                  ).FirstOrDefault();
+
+      if (passwordFound != null)
+      {
+        dB.Remove(passwordFound);
+        dB.SaveChanges();
+        Console.WriteLine("Deleted Successfully!");
+
+        isValidIdProvided = true;
+      }
+      else
+      {
+        Console.WriteLine("Password not found!");
+      }
+    }
+  }
+
   public static void PrintPasswordTable(IQueryable<IGrouping<string, Password>> passwords)
   {
     Console.Write("Would you like to see the passwords in plain text? (Y/N): ");
@@ -353,89 +387,5 @@ public class Menu
     }
   }
 
-  public static Password TakeInputForAddOrUpdate()
-  {
-    string? url = null;
-    string nameOfApp = "";
-    string? developer = null;
-    string usernameOrEmail = "";
-    string password = "";
 
-    Console.Write("Enter the type of application (Website/Application/Game): ");
-    string typeOfApp = Console.ReadLine() ?? "";
-
-
-    switch (typeOfApp.ToLower())
-    {
-      case "website":
-        {
-          Console.Write("Enter the name of the website (Ex: Facebook): ");
-          nameOfApp = Utils.CapitalizeEachWord(Console.ReadLine() ?? "");
-
-          Console.Write("Enter the url of the website: ");
-          url = Console.ReadLine() ?? "";
-
-          Console.Write("Enter the email/username of the website: ");
-          usernameOrEmail = Console.ReadLine() ?? "";
-
-          Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
-          break;
-        }
-      case "application":
-        {
-          Console.Write("Enter the name of the application (Ex: KeyFortress): ");
-          nameOfApp = Console.ReadLine() ?? "";
-
-          Console.Write($"Enter the email/username for {nameOfApp}: ");
-          usernameOrEmail = Console.ReadLine() ?? "";
-
-          Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
-          break;
-        }
-      case "game":
-        {
-          Console.Write("Enter the name of the game (Ex: Sniper Elite 3, EA FC 24): ");
-          nameOfApp = Console.ReadLine() ?? "";
-
-          Console.Write($"Enter the developer name of {nameOfApp}: ");
-          developer = Console.ReadLine() ?? "";
-
-          Console.Write($"Enter the username for {nameOfApp}: ");
-          usernameOrEmail = Console.ReadLine() ?? "";
-
-          Console.Write("Enter a password (Leave blank to generate a strong 💪 one): ");
-          password = Console.ReadLine() ?? "";
-          break;
-        }
-      default:
-        break;
-    }
-
-    if (password.Length <= 0)
-    {
-      password = Utils.GenerateStrongPassword();
-    }
-
-    string encryptionKey = UI.loggedInUser!.EncryptionKey;
-
-    CipherGenius cipherGenius = new CipherGenius(encryptionKey);
-
-    password = cipherGenius.Encrypt(password);
-
-    var newPassword = new Password
-    {
-      Type = typeOfApp.ToLower(),
-      UsernameOrEmail = usernameOrEmail,
-      EncryptedPassword = password,
-      UserID = UI.loggedInUser!.UserID,
-      User = UI.loggedInUser,
-      Name = Utils.CapitalizeEachWord(nameOfApp),
-      Developer = Utils.CapitalizeEachWord(developer ?? ""),
-      URL = Utils.CapitalizeEachWord(url ?? ""),
-    };
-
-    return newPassword;
-  }
 }
