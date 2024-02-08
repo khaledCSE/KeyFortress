@@ -9,7 +9,7 @@ public class UserRepository
 
   public UserRepository()
   {
-    dB = new DB();
+    dB = SharedState.dB;
   }
 
   public (bool success, string message) Create(string username, string password = "")

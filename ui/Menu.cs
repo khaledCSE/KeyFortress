@@ -8,7 +8,7 @@ namespace KeyFortress.ui;
 
 public class Menu
 {
-  public DB dB { get; set; }
+  private PasswordRepository passwordRepository;
   private string[] menuItems = [
       "🔑 Add Password",
       "📃 List Passwords",
@@ -17,9 +17,9 @@ public class Menu
       "🗑️ Delete Password",
       "❌ Exit"
       ];
-  public Menu(DB database)
+  public Menu()
   {
-    dB = database;
+    passwordRepository = new PasswordRepository();
 
     while (true)
     {
@@ -127,40 +127,36 @@ public class Menu
         break;
     }
 
-    if (password.Length <= 0)
+    var (success, message) = passwordRepository.Create(typeOfApp, usernameOrEmail, password, nameOfApp, developer, url);
+
+    if (success)
     {
-      password = Utils.GenerateStrongPassword();
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine(message);
+    }
+    else
+    {
+      if (message != "error")
+      {
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(message);
+      }
     }
 
-    string encryptionKey = UI.loggedInUser!.EncryptionKey;
-
-    CipherGenius cipherGenius = new CipherGenius(encryptionKey);
-
-    password = cipherGenius.Encrypt(password);
-
-    var newPassword = new Password
-    {
-      Type = typeOfApp.ToLower(),
-      UsernameOrEmail = usernameOrEmail,
-      EncryptedPassword = password,
-      UserID = UI.loggedInUser!.UserID,
-      User = UI.loggedInUser,
-      Name = Utils.CapitalizeEachWord(nameOfApp),
-      Developer = Utils.CapitalizeEachWord(developer ?? ""),
-      URL = Utils.CapitalizeEachWord(url ?? ""),
-    };
-
-    dB.Add(newPassword);
-    dB.SaveChanges();
+    Console.ResetColor();
   }
 
   public void ListPasswords()
   {
-    var passwords = dB.passwords
-                      .Where(u => u.UserID == UI.loggedInUser!.UserID)
-                      .GroupBy(u => u.Type);
+    var (success, passwords, _) = passwordRepository.ListAll();
 
-    PrintPasswordTable(passwords);
+    if (success && passwords != null)
+    {
+
+      PrintPasswordTable(passwords);
+    }
+
   }
 
   public void SearchPasswords()
@@ -168,7 +164,7 @@ public class Menu
     Console.Write("\nEnter the search term: ");
     string searchTerm = (Console.ReadLine() ?? "").ToLower();
 
-    var passwords = dB.passwords
+    var passwords = SharedState.dB.passwords
       .Where(p =>
             EF.Functions.Like(p.Type.ToLower(), $"%{searchTerm}%") ||
             EF.Functions.Like(p.Name.ToLower(), $"%{searchTerm}%") ||
@@ -190,10 +186,10 @@ public class Menu
       int passwordID = int.Parse((Console.ReadLine() ?? "").ToLower());
 
       // * Find the password
-      Password? passwordFound = dB.passwords
+      Password? passwordFound = SharedState.dB.passwords
                             .Where(p =>
                                     p.PasswordID == passwordID &&
-                                    p.UserID == UI.loggedInUser!.UserID
+                                    p.UserID == SharedState.loggedInUser!.UserID
                                   ).FirstOrDefault();
 
       if (passwordFound != null)
@@ -261,7 +257,7 @@ public class Menu
           {
 
             newPassword = Utils.GenerateStrongPassword();
-            CipherGenius cipherGenius = new CipherGenius(UI.loggedInUser!.EncryptionKey);
+            CipherGenius cipherGenius = new CipherGenius(SharedState.loggedInUser!.EncryptionKey);
             string encrypted = cipherGenius.Encrypt(newPassword);
             passwordFound.EncryptedPassword = encrypted;
           }
@@ -271,7 +267,7 @@ public class Menu
         if (typeOfApp.Length > 0) passwordFound.Type = typeOfApp;
         if (nameOfApp.Length > 0) passwordFound.Name = Utils.CapitalizeEachWord(nameOfApp);
 
-        dB.SaveChanges();
+        SharedState.dB.SaveChanges();
         Console.WriteLine("Updated Successfully!");
         isValidIdProvided = true;
       }
@@ -292,16 +288,16 @@ public class Menu
       int passwordID = int.Parse((Console.ReadLine() ?? "").ToLower());
 
       // * Find the password
-      Password? passwordFound = dB.passwords
+      Password? passwordFound = SharedState.dB.passwords
                             .Where(p =>
                                     p.PasswordID == passwordID &&
-                                    p.UserID == UI.loggedInUser!.UserID
+                                    p.UserID == SharedState.loggedInUser!.UserID
                                   ).FirstOrDefault();
 
       if (passwordFound != null)
       {
-        dB.Remove(passwordFound);
-        dB.SaveChanges();
+        SharedState.dB.Remove(passwordFound);
+        SharedState.dB.SaveChanges();
         Console.WriteLine("Deleted Successfully!");
 
         isValidIdProvided = true;
@@ -324,7 +320,7 @@ public class Menu
     {
       // Access the group's key (Type) and elements
 
-      CipherGenius cipherGenius = new CipherGenius(UI.loggedInUser!.EncryptionKey);
+      CipherGenius cipherGenius = new CipherGenius(SharedState.loggedInUser!.EncryptionKey);
 
       switch (group.Key.ToLower())
       {

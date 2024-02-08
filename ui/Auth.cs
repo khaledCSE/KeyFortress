@@ -1,5 +1,4 @@
 ﻿using KeyFortress.enums;
-using KeyFortress.models;
 using KeyFortress.repositories;
 using KeyFortress.utils;
 namespace KeyFortress.ui;
@@ -8,11 +7,9 @@ public class Auth
 {
   private bool isAuthenticated = false;
   private UserRepository userRepository;
-  public DB dB { get; set; }
 
-  public Auth(DB database)
+  public Auth()
   {
-    dB = database;
     userRepository = new UserRepository();
     AuthFlow();
   }
@@ -26,7 +23,7 @@ public class Auth
     Console.Write("Enter password: ");
     string password = Utils.MaskPasswordInput();
 
-    var user = dB.users.Where(u => u.Username == username).FirstOrDefault();
+    var user = SharedState.dB.users.Where(u => u.Username == username).FirstOrDefault();
 
     if (user == null) return LoginResponse.newUser;
 
@@ -38,7 +35,7 @@ public class Auth
 
     if (!passwordsMatch) return LoginResponse.wrongPassword;
 
-    UI.loggedInUser = user;
+    SharedState.loggedInUser = user;
     return LoginResponse.ok;
   }
 

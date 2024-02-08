@@ -1,16 +1,12 @@
 ﻿using Figgle;
-using KeyFortress.models;
 
 namespace KeyFortress.ui;
 
 public class UI
 {
-  public DB dB { get; set; }
-  public static User? loggedInUser { get; set; }
 
-  public UI(DB database)
+  public UI()
   {
-    dB = database;
     GreetUser();
     UiFlow();
   }
@@ -29,7 +25,7 @@ public class UI
 
   public void UiFlow()
   {
-    _ = new Auth(dB);
-    _ = new Menu(dB);
+    _ = new Auth();
+    _ = new Menu();
   }
 }
