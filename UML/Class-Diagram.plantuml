@@ -1,0 +1,135 @@
+@startuml "KeyFortress"
+skinparam PackageStereotypeFontSize 25
+skinparam PackageFontName Roboto
+skinparam ClassFontSize 22
+skinparam ClassBackgroundColor White
+skinparam ClassFontColor automatic
+skinparam ClassBorderColor Teal
+skinparam ClassBorderThickness 3
+skinparam ClassHeaderBackgroundColor Teal
+skinparam PackageBorderColor Teal
+skinparam PackageBorderThickness 5
+
+package KeyFortress.models {
+  class User {
+    - UserID: int
+    - Username: string
+    - Password: string
+    - EncryptionKey: string
+  }
+
+  class Password {
+    - PasswordID: int
+    - Type: string
+    - UsernameOrEmail: string
+    - EncryptedPassword: string
+    - UserID: int
+    - User: User
+    - Name: string
+    - Developer: string
+    - URL: string
+    - DateCreated: DateTime
+    - DateLastUpdated: DateTime
+  }
+
+  class DB {
+    # users: DbSet<User>
+    # passwords: DbSet<Password>
+    + SaveChanges(): int
+  }
+}
+
+package KeyFortress.utils {
+  class CipherGenius {
+    - key: byte[]
+    + CipherGenius(EncryptionKey: string)
+    + Encrypt(plainText: string): string
+    + Decrypt(cipherText: string): string
+  }
+
+  class Utils {
+    + GenerateStrongPassword(length: int = 16): string
+    + GetTimeAgo(inputDate: DateTime): string
+    + CapitalizeEachWord(sentence: string): string
+    + MaskPasswordInput(): string
+  }
+}
+
+package KeyFortress.repositories {
+  class UserRepository {
+    - dB: DB
+    + Create(username: string, password: string = ""): (bool, string)
+  }
+
+  class PasswordRepository {
+    - SharedState: SharedState
+    + Create(Type: string, UsernameOrEmail: string, PlainPassword: string, Name: string, Developer: string?, URL: string?): (bool, string)
+    + ListAll(): (bool, IQueryable<IGrouping<string, Password>>?, string)
+    + GetGroupedByType(searchTerm: string = ""): (bool, IQueryable<IGrouping<string, Password>>?, string)
+    + DeleteById(passwordID: int): (bool, string)
+  }
+}
+
+package KeyFortress {
+  class SharedState {
+    - dB: DB
+    - loggedInUser: User
+  }
+}
+
+package KeyFortress.ui {
+  class Auth {
+    - isAuthenticated: bool
+    - userRepository: UserRepository
+    + Auth()
+    + Login(): LoginResponse
+    + Signup(): SignupResponse
+    + AuthFlow()
+  }
+
+  class Menu {
+    - passwordRepository: PasswordRepository
+    - menuItems: string[]
+    + Menu()
+    + DisplayMenu(): string
+    + AddPassword()
+    + ListPasswords()
+    + SearchPasswords()
+    + UpdatePassword()
+    + DeletePassword()
+    + static PrintPasswordTable(passwords: IQueryable<IGrouping<string, Password>>)
+    + static AboutApplication()
+  }
+
+  class UI {
+    + UI()
+    + GreetUser()
+    + UiFlow()
+  }
+}
+
+enum LoginResponse {
+  ok
+  newUser
+  wrongPassword
+}
+
+enum SignupResponse {
+  ok
+  error
+  userExists
+}
+
+DB --> User
+DB --> Password
+User --> CipherGenius
+Password --> CipherGenius
+UserRepository --> DB
+PasswordRepository --> DB
+PasswordRepository --> SharedState
+Auth --> UserRepository
+Menu --> PasswordRepository
+UI --> Auth
+UI --> Menu
+
+@enduml
