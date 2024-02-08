@@ -15,6 +15,7 @@ public class Menu
       "🔍 Search Password",
       "🛡️ Update Password",
       "🗑️ Delete Password",
+      "🍀 About",
       "❌ Exit"
       ];
   public Menu()
@@ -42,6 +43,9 @@ public class Menu
         case "🗑️ Delete Password":
           DeletePassword();
           break;
+        case "🍀 About":
+          AboutApplication();
+          break;
         case "❌ Exit":
           Console.WriteLine("Time to leave the fortress like a 👑");
           Environment.Exit(0);
@@ -50,6 +54,29 @@ public class Menu
           break;
       }
     }
+  }
+
+  static void AboutApplication()
+  {
+    Console.WriteLine("Welcome to KeyFortress - Your Secure Multi-User Password Manager!");
+    Console.WriteLine();
+    Console.WriteLine("KeyFortress is your ultimate solution for managing passwords securely, allowing you to");
+    Console.WriteLine("store and access passwords for multiple users in a highly encrypted environment.");
+    Console.WriteLine();
+    Console.WriteLine("Key Features:");
+    Console.WriteLine("1. Multi-User Support: Share passwords securely with your team members or family.");
+    Console.WriteLine("2. Robust Encryption: Your passwords are encrypted using the latest encryption standards,");
+    Console.WriteLine("   ensuring maximum security against unauthorized access.");
+    Console.WriteLine("3. Intuitive Interface: KeyFortress provides a user-friendly command-line interface, making");
+    Console.WriteLine("   it easy to add, update, and retrieve passwords with just a few keystrokes.");
+    Console.WriteLine("4. Password Generation: Generate strong and unique passwords on-the-fly, eliminating the");
+    Console.WriteLine("   need to remember complex passwords for different accounts.");
+    Console.WriteLine("5. Cross-Platform Compatibility: KeyFortress runs on Windows, macOS, and Linux, ensuring");
+    Console.WriteLine("   you can access your passwords from any device.");
+    Console.WriteLine();
+    Console.WriteLine("Stay secure with KeyFortress and never worry about forgetting passwords again!");
+
+    Console.WriteLine();
   }
 
   public string DisplayMenu()
