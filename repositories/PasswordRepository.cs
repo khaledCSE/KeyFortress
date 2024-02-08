@@ -1,6 +1,7 @@
 using KeyFortress;
 using KeyFortress.models;
 using KeyFortress.utils;
+using Microsoft.EntityFrameworkCore;
 
 public class PasswordRepository
 {
@@ -58,6 +59,29 @@ public class PasswordRepository
                       .Where(u => u.UserID == SharedState.loggedInUser!.UserID)
                       .GroupBy(u => u.Type);
       return (true, passwords, "Success");
+    }
+    catch (Exception ex)
+    {
+      Console.Error.WriteLine(ex);
+      return (false, null, "error");
+    }
+  }
+
+  public (bool success, IQueryable<IGrouping<string, Password>>? passwords, string message) GetGroupedByType(string searchTerm = "")
+  {
+    try
+    {
+      var passwords = SharedState.dB.passwords
+      .Where(p =>
+            (EF.Functions.Like(p.Type.ToLower(), $"%{searchTerm}%") ||
+            EF.Functions.Like(p.Name.ToLower(), $"%{searchTerm}%") ||
+            ((p.URL != null) && EF.Functions.Like(p.URL.ToLower(), $"%{searchTerm}%")) ||
+            (p.Developer != null && EF.Functions.Like(p.Developer.ToLower(), $"%{searchTerm}%"))) &&
+            p.UserID == SharedState.loggedInUser!.UserID
+      )
+      .GroupBy(p => p.Type);
+
+      return (true, passwords, "success");
     }
     catch (Exception ex)
     {

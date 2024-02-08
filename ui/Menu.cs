@@ -153,7 +153,6 @@ public class Menu
 
     if (success && passwords != null)
     {
-
       PrintPasswordTable(passwords);
     }
 
@@ -164,16 +163,13 @@ public class Menu
     Console.Write("\nEnter the search term: ");
     string searchTerm = (Console.ReadLine() ?? "").ToLower();
 
-    var passwords = SharedState.dB.passwords
-      .Where(p =>
-            EF.Functions.Like(p.Type.ToLower(), $"%{searchTerm}%") ||
-            EF.Functions.Like(p.Name.ToLower(), $"%{searchTerm}%") ||
-            ((p.URL != null) && EF.Functions.Like(p.URL.ToLower(), $"%{searchTerm}%")) ||
-            (p.Developer != null && EF.Functions.Like(p.Developer.ToLower(), $"%{searchTerm}%"))
-      )
-      .GroupBy(p => p.Type);
+    var (success, passwords, _) = passwordRepository.GetGroupedByType(searchTerm);
 
-    PrintPasswordTable(passwords);
+    if (success && passwords != null)
+    {
+      PrintPasswordTable(passwords);
+    }
+
   }
 
   public void UpdatePassword()
