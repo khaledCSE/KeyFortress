@@ -1,16 +1,19 @@
 ﻿using KeyFortress.enums;
 using KeyFortress.models;
+using KeyFortress.repositories;
 using KeyFortress.utils;
 namespace KeyFortress.ui;
 
 public class Auth
 {
   private bool isAuthenticated = false;
+  private UserRepository userRepository;
   public DB dB { get; set; }
 
   public Auth(DB database)
   {
     dB = database;
+    userRepository = new UserRepository();
     AuthFlow();
   }
 
@@ -48,51 +51,21 @@ public class Auth
     Console.Write("Enter password (Leave blank to generate a strong password): ");
     string password = Utils.MaskPasswordInput();
 
-    var user = dB.users.Where(u => u.Username == username).FirstOrDefault();
+    var (success, message) = userRepository.Create(username, password);
 
-    if (user != null) return SignupResponse.userExists;
-
-    if (password.Length == 0)
+    if (success)
     {
-      password = Utils.GenerateStrongPassword();
-    }
-
-    string encryptionKey = Utils.GenerateStrongPassword();
-
-    CipherGenius encryptor = new CipherGenius(encryptionKey);
-    string encrypted = encryptor.Encrypt(password);
-
-    try
-    {
-      dB.Add(new User { Username = username, Password = encrypted, EncryptionKey = encryptionKey });
-      dB.SaveChanges();
-
       Console.ForegroundColor = ConsoleColor.Green;
-      Console.WriteLine($"Welcome {username}!");
-
+      Console.WriteLine(message);
+      Console.ResetColor();
       return SignupResponse.ok;
     }
-    catch (Exception ex)
+    else
     {
       Console.ForegroundColor = ConsoleColor.Red;
-      if (ex.InnerException != null)
-      {
-        var IsUniqueError = ex?.InnerException.Message.Contains("'UNIQUE constraint failed: users.username'");
-        if (IsUniqueError == true)
-        {
-          Console.WriteLine("Duplicate Username is not allowed.");
-        }
-      }
-      else
-      {
-        Console.WriteLine($"An error occurred: {ex.Message}");
-      }
-
-      return SignupResponse.error;
-    }
-    finally
-    {
+      Console.WriteLine(message);
       Console.ResetColor();
+      return SignupResponse.error;
     }
   }
 
