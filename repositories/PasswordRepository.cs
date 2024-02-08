@@ -89,4 +89,32 @@ public class PasswordRepository
       return (false, null, "error");
     }
   }
+
+  public (bool success, string message) DeleteById(int passwordID)
+  {
+    try
+    {
+      Password? passwordFound = SharedState.dB.passwords
+                            .Where(p =>
+                                    p.PasswordID == passwordID &&
+                                    p.UserID == SharedState.loggedInUser!.UserID
+                                  ).FirstOrDefault();
+      if (passwordFound != null)
+      {
+        SharedState.dB.Remove(passwordFound);
+        SharedState.dB.SaveChanges();
+
+        return (true, "Deleted Successfully!");
+      }
+      else
+      {
+        return (false, "Password not found!");
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.Error.WriteLine(ex);
+      return (false, "error");
+    }
+  }
 }

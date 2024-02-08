@@ -283,24 +283,24 @@ public class Menu
       Console.Write("\nEnter the Password ID: ");
       int passwordID = int.Parse((Console.ReadLine() ?? "").ToLower());
 
-      // * Find the password
-      Password? passwordFound = SharedState.dB.passwords
-                            .Where(p =>
-                                    p.PasswordID == passwordID &&
-                                    p.UserID == SharedState.loggedInUser!.UserID
-                                  ).FirstOrDefault();
+      var (success, message) = passwordRepository.DeleteById(passwordID);
 
-      if (passwordFound != null)
+      if (success)
       {
-        SharedState.dB.Remove(passwordFound);
-        SharedState.dB.SaveChanges();
-        Console.WriteLine("Deleted Successfully!");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(message);
+        Console.ResetColor();
 
         isValidIdProvided = true;
       }
       else
       {
-        Console.WriteLine("Password not found!");
+        if (message != "error")
+        {
+          Console.ForegroundColor = ConsoleColor.Red;
+          Console.WriteLine(message);
+          Console.ResetColor();
+        }
       }
     }
   }
