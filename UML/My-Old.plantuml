@@ -1,0 +1,85 @@
+@startuml
+
+class Program {
+  + Main(String[] args)
+}
+
+class UI {
+  + dB: DB
+  + loggedInUser User?
+  + GreetUser()
+  + UIFlow()
+}
+
+class Auth {
+  + dB: DB
+  + AuthFlow()
+  + Login()
+  + Signup()
+}
+
+class Menu {
+  + dB: DB
+  + AddPassword()
+  + ListPasswords()
+  + SearchPasswords()
+  + UpdatePassword()
+  + DeletePassword()
+}
+
+class Password {
+  - PasswordID: Int
+  - UserID: Int
+  - User: User
+  - Type: string
+  - Name: string
+  - URL: string?
+  - UsernameOrEmail: string
+  - EncryptedPassword: string
+  - Developer: string?
+  - DateCreated: DateTime
+  - DateLastUpdated: Date Time
+}
+
+class User {
+  - UserID: int
+  - Username: string
+  Password: string
+  - EncryptionKey: string
+}
+
+class CipherGenius {
+  - key: byte[]
+  + CipherGenius(Encryptionkey: string)
+  + Encrypt(plainText: string): string
+  + Decrypt(cipherText: string): string
+}
+
+class Utils {
+  + GenerateStrongPassword(length: int): string
+  + GetTimeAgo(inputDate: DateTime): string
+  + CapitalizeEachWord(sentence: string): string
+  + MaskPasswordinput(): string
+}
+
+class DB {
+  + users: DbSet<User>
+  + passwords: DbSet<Password>
+  + DbPath: string
+  + DB()
+  + OnConfiguring()
+}
+
+Program --> UI
+Program --> DB
+UI --> Menu
+UI --> Auth
+Auth --> User
+User --> DB
+Password --> DB
+Menu --> DB
+Menu --> CipherGenius
+CipherGenius --> Utils
+Menu --> Utils
+
+@enduml

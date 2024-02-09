@@ -103,7 +103,12 @@ public class Auth
           var signupStatus = Signup();
           if (signupStatus == SignupResponse.ok)
           {
-            isAuthenticated = true;
+            var status = Login();
+            if (status == LoginResponse.ok)
+            {
+
+              isAuthenticated = true;
+            }
           }
           else if (signupStatus == SignupResponse.userExists)
           {

@@ -1,0 +1,56 @@
+@startuml
+
+class User {
+  - username: String
+  - password: String
+  
+  public:
+    + addPassword()
+    + editPassword()
+    + deletePassword()
+    + viewPassword()
+}
+
+class Admin {
+  - username: String
+  - password: String
+  
+  public:
+    + viewAllPassword()
+    + editAnyPassword()
+    + deleteAnyPassword()
+}
+
+class Password {
+  - username: String
+  - password: String
+  - dateCreated: DateTime
+  - dateLastUpdated: DateTime
+
+  public:
+    + encryptPassword()
+    + decryptPassword()
+    + generateRandomPassword()
+}
+
+class WebsitePassword {
+  - websiteName: String
+  - websiteUrl: String
+}
+
+class ApplicationPassword {
+  - appName: String
+}
+
+class GamePassword {
+  - gameName: String
+  - gameDeveloper: String
+}
+
+User --> Password
+Admin --> Password
+WebsitePassword --> Password
+ApplicationPassword --> Password
+GamePassword --> Password
+
+@enduml

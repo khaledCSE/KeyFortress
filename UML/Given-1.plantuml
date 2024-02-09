@@ -1,0 +1,44 @@
+@startuml
+
+class EndUser {
+    # Username and password are private attributes
+    - end-username: String
+    - password: String
+
+    public:
+        + Insert password()
+        + Modify password()
+        + Erase password()
+        + Look all password()
+}
+
+class Password {
+  + Login()
+  + Registration()
+
+  - end_username: String
+  - password: String
+  - desktopApplicationName: String
+  - websiteUrl: String
+  - gameName: String
+
+  + encryption()
+  + decryption()
+}
+
+class Controller {
+    # Username and password are private attributes
+    - controller name: String
+    - password: String
+
+    public:
+        + Insert password()
+        + Modify password()
+        + Erase all password()
+        + Login()
+}
+
+EndUser <|-- Password
+Password o-- Controller
+
+@enduml

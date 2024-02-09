@@ -1,0 +1,27 @@
+@startuml "CipherGenius"
+
+skinparam activity {
+    FontSize 14
+    ArrowColor DarkGreen
+    BorderColor Teal
+    BorderThickness 3
+    BackgroundColor LightGreen
+    ForegroundColor DarkGreen
+}
+
+start
+
+:Start Encryption/Decryption Process;
+if (Encryption or Decryption?) then (Encryption)
+    :Input: Plaintext, Encryption Key;
+    :Encrypt Plaintext using AES;
+    :Output: Ciphertext;
+else (Decryption)
+    :Input: Ciphertext, Encryption Key;
+    :Decrypt Ciphertext using AES;
+    :Output: Plaintext;
+endif
+
+stop
+
+@enduml
