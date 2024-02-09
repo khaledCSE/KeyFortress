@@ -4,6 +4,17 @@ An uncompromising and Multi-user console-based password manager built by Dot Net
 
 ## Running in Development
 
+## Using Automated Script
+
+KeyFortress comes baked with automated scripts for development.
+
+- For windows: double click and open `run.bat` and that's it!
+- For mac and linux, run `sudo chmod +x run.sh` for the first time and `./run.sh` from then on.
+
+> NOTE: Linux and Mac must have at least dotnet core installed.
+
+## Running it From Scratch
+
 ### Prerequisites
 
 - Dot net core must be installed
