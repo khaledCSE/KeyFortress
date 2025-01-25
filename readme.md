@@ -181,6 +181,13 @@ The `CipherGenius` class uses advanced encryption algorithms to ensure that pass
 - .NET Core must be installed
 - Entity Framework Core must be installed
   - To install it, run: `dotnet tool install --global dotnet-ef`
+
+## Using Automated Script
+
+KeyFortress comes baked with automated scripts for development.
+
+- For windows: double click and open `run.bat` and that's it!
+- For mac and linux, run `sudo chmod +x run.sh` for the first time and `./run.sh` from then on.
 > NOTE: Linux and macOS must have at least .NET Core installed
 
 ### Running it From Scratch
