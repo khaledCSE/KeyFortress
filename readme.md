@@ -61,6 +61,9 @@ utils/
     Utils.cs
 ```
 
+## Composition of Classes
+<img src="https://github.com/khaledCSE/KeyFortress/blob/main/images/class-diagram.png"/>
+
 ## Design Patterns
 *KeyFortress* employs several design patterns to ensure a clean, maintainable, and scalable codebase. Here are some of the key design patterns used:
 
@@ -155,6 +158,8 @@ These design patterns help to keep the codebase organized, promote code reuse, a
 
 ## CypherGenius
 The `CipherGenius` class is responsible for handling encryption and decryption of passwords in KeyFortress. It ensures that all stored passwords are securely encrypted, providing an additional layer of security for user data.
+
+<img src="https://github.com/khaledCSE/KeyFortress/blob/main/images/cypherGenius.png" />
 
 ### Methods
 - **Encrypt**: Encrypts a plain text password using a specified key.
